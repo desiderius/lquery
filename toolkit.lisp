@@ -6,7 +6,7 @@
 
 (in-package #:org.shirakumo.lquery)
 
-(defvar *lquery-master-document* NIL
+(defvar *lquery-master-document* nil
   "The master document used at the beginning of a chain.")
 
 (defmacro with-master-document ((&optional (doc '*lquery-master-document*)) &body body)
@@ -14,26 +14,26 @@
   `(let ((*lquery-master-document* ,doc))
      ,@body))
 
-(defun make-proper-vector (&key (size 0) initial-element initial-contents (fill-pointer T))
+(defun make-proper-vector (&key (size 0) initial-element initial-contents (fill-pointer t))
   "Creates a new proper vector."
   (cond
-    (initial-element  (make-array size :initial-element initial-element :adjustable T :fill-pointer fill-pointer))
-    (initial-contents (make-array size :initial-contents initial-contents :adjustable T :fill-pointer fill-pointer))
-    (T                (make-array size :adjustable T :fill-pointer fill-pointer))))
+    (initial-element  (make-array size :initial-element initial-element :adjustable t :fill-pointer fill-pointer))
+    (initial-contents (make-array size :initial-contents initial-contents :adjustable t :fill-pointer fill-pointer))
+    (t                (make-array size :adjustable t :fill-pointer fill-pointer))))
 
 (defun copy-proper-vector (sequence &key (transform #'identity))
   "Copies the sequence into a new proper vector."
   (declare (optimize (speed 3)))
   (etypecase sequence
     (vector
-     (loop with result = (make-proper-vector :size (length sequence) :fill-pointer T)
+     (loop with result = (make-proper-vector :size (length sequence) :fill-pointer t)
            for i from 0 below (length sequence)
            do (setf (aref result i)
                     (funcall transform (aref sequence i)))
            finally (return result)))
     (list
      (loop with length = (length sequence)
-           with result = (make-proper-vector :size length :fill-pointer T)
+           with result = (make-proper-vector :size length :fill-pointer t)
            for i from 0 below length
            for item in sequence
            do (setf (aref result i)
@@ -48,7 +48,7 @@
                 (copy-proper-vector var)))
     (array (copy-proper-vector var))
     (list (copy-proper-vector var))
-    (T (make-proper-vector :size 1 :initial-element var))))
+    (t (make-proper-vector :size 1 :initial-element var))))
 
 (defun load-page (file-or-string)
   "Load the given file or string into a HTML DOM."
@@ -141,7 +141,7 @@
                 do (case char
                      ((#\Space #\Tab #\Return #\Linefeed)
                       (maybe-add-piece))
-                     (T
+                     (t
                       (write-char char out)))
                 finally (maybe-add-piece))
           (nreverse parts))))))
@@ -153,7 +153,7 @@
                   (setf ,stream (make-string-output-stream)))))
     (loop with table = (make-hash-table :test 'equalp)
           with output = (make-string-output-stream)
-          with attribute = NIL
+          with attribute = nil
           with section = :name
           for char across css
           do (case section
@@ -161,15 +161,15 @@
                         (#\: (setf section :value
                                    attribute (pop-string output)))
                         (#\Space)
-                        (T (write-char char output))))
+                        (t (write-char char output))))
                (:value (case char
                          (#\; (setf section :name
                                     (gethash attribute table) (pop-string output)))
-                         (T (write-char char output)
+                         (t (write-char char output)
                           (case char
                             (#\( (setf section #\)))
                             (#\" (setf section #\"))))))
-               (T (write-char char output)
+               (t (write-char char output)
                 (when (char= char section)
                   (setf section :value))))
           finally (progn

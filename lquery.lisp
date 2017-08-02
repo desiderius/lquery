@@ -75,13 +75,13 @@ BODY          ::= form*"
   (let ((docstring (car body)))
     (if (stringp docstring)
         (setf body (cdr body))
-        (setf docstring (format NIL "lQuery node macro ~a" name)))
+        (setf docstring (format nil "lQuery node macro ~a" name)))
     `(defun ,(intern (symbol-name name) :lquery-macros) (,previous-form ,@arguments)
        ,docstring
        ,@body)))
 
 (defmacro $ (&body actions)
-#.(format NIL "Performs lQuery operations on the current document.
+#.(format nil "Performs lQuery operations on the current document.
 
 Each argument is executed in sequence. The arguments are evaluated according to the defined argument-handlers. ~
 By default, the following cases are handled: 
@@ -112,7 +112,7 @@ By default, the following cases are handled at run time:
 
 (defun %$ (actions)
   (if (null actions)
-      `(make-proper-vector :size 1 :initial-element *lquery-master-document* :fill-pointer T)
+      `(make-proper-vector :size 1 :initial-element *lquery-master-document* :fill-pointer t)
       (let ((action (car actions))
             (rest (cdr actions)))
         (determine-argument action (%$ rest)))))
@@ -161,7 +161,7 @@ BODY          ::= form*"
   `(defmethod determine-value ((,variable-name ,type) ,operator-name)
      ,@body))
 
-(define-value-handler T (variable nodes)
+(define-value-handler t (variable nodes)
   (declare (ignore nodes))
   variable)
 
@@ -184,7 +184,7 @@ BODY          ::= form*"
 
 (define-value-handler plump:node (node nodes)
   (declare (ignore nodes))
-  (make-proper-vector :size 1 :initial-element node :fill-pointer T))
+  (make-proper-vector :size 1 :initial-element node :fill-pointer t))
 
 (define-value-handler function (function nodes)
   (funcall function nodes))

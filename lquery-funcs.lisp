@@ -45,8 +45,8 @@
 (define-lquery-list-function ancestor (working-nodes)
   "Find the common ancestor of all elements."
   (loop with parent-lists = (parent-lists working-nodes)
-        with previous = NIL
-        with current = NIL
+        with previous = nil
+        with current = nil
         while (when (loop for i from 1 below (length parent-lists)
                           for a = (setf current (pop (aref parent-lists i)))
                             then (pop (aref parent-lists i))
@@ -73,7 +73,7 @@
 (define-lquery-function attr (node &rest pairs)
   "Retrieve or set attributes on a node.
 The value on a node is turned into a string using PRINC-TO-STRING.
-If a value is NIL, the associated attribute is removed."
+If a value is nil, the associated attribute is removed."
   (case (length pairs)
     (0 (error "Attribute arguments must be one or more attributes or one or more key-value pairs."))
     (1 (plump:attribute node (assure-attribute (first pairs))))
@@ -173,7 +173,7 @@ If no matching element can be found the root is entered instead."
 (define-lquery-function deepest (node)
   "Returns the innermost (left-bound) child element."
   (labels ((r (node)
-             (loop with elp = NIL
+             (loop with elp = nil
                    for child across (plump:children node)
                    when (plump:element-p child)
                      do (setf elp child)
@@ -188,7 +188,7 @@ If no matching element can be found the root is entered instead."
   (lquery-funcs:remove nodes selector))
 
 (define-lquery-list-function each (nodes fun &key replace)
-  "Execute the specified function on each element until NIL is returned or all elements have been processed. The original set of elements is returned if replace is NIL."
+  "Execute the specified function on each element until nil is returned or all elements have been processed. The original set of elements is returned if replace is nil."
   (if replace
       (loop for i from 0 below (length nodes)
             for result = (funcall fun (aref nodes i))
@@ -204,7 +204,7 @@ If no matching element can be found the root is entered instead."
   (plump:clear node))
 
 (define-lquery-function empty-p (node)
-  "Check if the node contains no children and/or only empty (whitespace) text nodes. If it is empty, T is returned, otherwise NIL."
+  "Check if the node contains no children and/or only empty (whitespace) text nodes. If it is empty, T is returned, otherwise nil."
   (loop for child across (plump:children node)
         never (or (plump:element-p child)
                   (and (plump:text-node-p child)
@@ -229,7 +229,7 @@ If no matching element can be found the root is entered instead."
   "Reduce the set of matched elements to those that match the selector or pass the function's test."
   (replace-vector-if nodes (funcs-or-select selector-or-function)))
 
-(define-lquery-list-function find (nodes selector-or-function &key (test-self NIL))
+(define-lquery-list-function find (nodes selector-or-function &key (test-self nil))
   "Get the descendants of each element filtered by selector or function."
   (loop with result = (make-proper-vector)
         with func = (funcs-or-select selector-or-function)
@@ -269,7 +269,7 @@ If no matching element can be found the root is entered instead."
   (let ((class (assure-attribute class)))
     (loop for node across working-nodes
           if (find class (classes node) :test #'string-equal)
-            return T)))
+            return t)))
 
 (define-lquery-list-function hide (working-nodes )
   "Hide the matched elements (short for (css \"display\" \"none\"))."
@@ -284,7 +284,7 @@ If no matching element can be found the root is entered instead."
           (plump:root (loop for child across (plump:children new-content)
                             do (plump:append-child node child)))
           (plump:node (plump:append-child node new-content))
-          (T (plump:parse (princ-to-string new-content) :root node)))
+          (t (plump:parse (princ-to-string new-content) :root node)))
         node)
       (with-output-to-string (stream)
         (plump:serialize (plump:children node) stream))))
@@ -322,7 +322,7 @@ If no matching element can be found the root is entered instead."
           thereis (funcall find-fun node))))
 
 (defun lquery-funcs:is-empty (node)
-  "Check if the node contains no children and/or only empty (whitespace) text nodes. If it is empty, T is returned, otherwise NIL.
+  "Check if the node contains no children and/or only empty (whitespace) text nodes. If it is empty, T is returned, otherwise nil.
 Alias of EMPTY-P"
   (lquery-funcs:empty-p node))
 
@@ -390,7 +390,7 @@ This is commonly useful in combination with COMBINE."
         finally (return result)))
 
 (define-lquery-list-function node (working-nodes &optional (n 0))
-  "Return the specified node (default first) directly, without encompassing it into a vector if it exists. Otherwise return NIL."
+  "Return the specified node (default first) directly, without encompassing it into a vector if it exists. Otherwise return nil."
   (when (< n (length working-nodes))
     (elt working-nodes n)))
 
@@ -400,7 +400,7 @@ This is commonly useful in combination with COMBINE."
     (replace-vector-if working-nodes fun)))
 
 (define-lquery-function not-empty (node)
-  "Check if the node contains no children and/or only empty (whitespace) text nodes. If the node is effectively empty NIL is returned, otherwise T"
+  "Check if the node contains no children and/or only empty (whitespace) text nodes. If the node is effectively empty nil is returned, otherwise T"
   (loop for child across (plump:children node)
         thereis (or (plump:element-p child)
                     (and (plump:text-node-p child)
@@ -514,7 +514,7 @@ This is commonly useful in combination with COMBINE."
 (define-lquery-function remove-class (node &rest classes)
   "Remove classes from each element."
   (setf (plump:attribute node "class")
-        (format NIL "~{~a~^ ~}"
+        (format nil "~{~a~^ ~}"
                 (remove-if #'(lambda (a) (find a classes :test #'string=)) (classes node))))
   node)
 
@@ -535,7 +535,7 @@ This is commonly useful in combination with COMBINE."
                (loop for i from 0 below (length working-nodes)
                      do (setf (aref family (+ i position))
                               (aref working-nodes i)))
-               (setf (plump:parent target) NIL)))
+               (setf (plump:parent target) nil)))
     working-nodes))
 
 (define-lquery-list-function replace-with (working-nodes html-or-nodes)
@@ -579,7 +579,7 @@ This is commonly useful in combination with COMBINE."
 (define-lquery-list-function slice (working-nodes start &optional end)
   "Reduce the set of matched elements to a subset specified by a range of indices"
   (unless end (setf end (length working-nodes)))
-  (array-shift working-nodes :from start :to end :n (- start) :adjust NIL)
+  (array-shift working-nodes :from start :to end :n (- start) :adjust nil)
   (setf (fill-pointer working-nodes) (- end start))
   working-nodes)
 
@@ -588,8 +588,8 @@ This is commonly useful in combination with COMBINE."
   (plump-dom:splice node)
   node)
 
-(define-lquery-function text (node &optional (text NIL t-s-p))
-  "Get the combined text contents of each element, including their descendants. If text is set, all text nodes are removed and a new text node is appended to the end of the node. If text is NIL, all direct text nodes are removed from the node. If text is not a string, it is transformed into one by PRINC-TO-STRING."
+(define-lquery-function text (node &optional (text nil t-s-p))
+  "Get the combined text contents of each element, including their descendants. If text is set, all text nodes are removed and a new text node is appended to the end of the node. If text is nil, all direct text nodes are removed from the node. If text is not a string, it is transformed into one by PRINC-TO-STRING."
   (if t-s-p
       (if text 
           (progn
@@ -597,7 +597,7 @@ This is commonly useful in combination with COMBINE."
             (plump:make-text-node node (typecase text
                                          (plump:node (with-output-to-string (stream)
                                                        (plump:serialize text stream)))
-                                         (T (princ-to-string text))))
+                                         (t (princ-to-string text))))
             node)
           (progn
             (replace-vector-if (plump:children node) (complement #'plump:textual-node-p))
@@ -631,11 +631,11 @@ This is commonly useful in combination with COMBINE."
           for i from parentpos
           do (setf (aref (plump:children pparent) i) child
                    (plump:parent child) pparent))
-    (setf (plump:parent parent) NIL
+    (setf (plump:parent parent) nil
           (fill-pointer (plump:children parent)) 0))
   node)
 
-(define-lquery-function val (node &optional (value NIL v-p))
+(define-lquery-function val (node &optional (value nil v-p))
   "Get the current values or set the value of every matched element."
   (if v-p
       (progn
@@ -682,13 +682,13 @@ This is commonly useful in combination with COMBINE."
                    (plump:parent wrapper) node)))
   nodes)
 
-(define-lquery-list-function write-to-file (working-nodes file &key (if-does-not-exist :CREATE) (if-exists :SUPERSEDE))
+(define-lquery-list-function write-to-file (working-nodes file &key (if-does-not-exist :create) (if-exists :supersede))
   "Write the serialized node to the file. Note that always only the first element is written."
-  (with-open-file (stream file :direction :OUTPUT :if-does-not-exist if-does-not-exist :if-exists if-exists)
+  (with-open-file (stream file :direction :output :if-does-not-exist if-does-not-exist :if-exists if-exists)
     (plump:serialize (aref working-nodes 0) stream))
   working-nodes)
 
-(define-lquery-function serialize (node &optional (stream NIL))
+(define-lquery-function serialize (node &optional (stream nil))
                       "Serialize the node into a string."
   (if stream
       (plump:serialize node stream)

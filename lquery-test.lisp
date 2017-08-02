@@ -27,17 +27,17 @@
 
 (defun vlast (vector)
   (if (= 0 (length vector))
-      NIL
+      nil
       (aref vector (1- (length vector)))))
 
 (defun vfirst (vector)
   (if (= 0 (length vector))
-      NIL
+      nil
       (aref vector 0)))
 
 (defun vsecond (vector)
   (if (< (length vector) 1)
-      NIL
+      nil
       (aref vector 1)))
 
 (def-suite lquery)
@@ -60,16 +60,16 @@
   (is (eq (vfirst ($ "ul"))
           (let ((selector "#list"))
             (vfirst ($ selector)))))
-  (is (eq T
+  (is (eq t
           (labels ((root-p (nodes) (plump:root-p (vfirst nodes))))
             ($ #'root-p))))
   (is (typep ($ ()) 'vector))
-  (is (eq T
-          ($ (inline T))))
+  (is (eq t
+          ($ (inline t))))
   (is (eq (vfirst ($ "ul"))
           (vfirst ($ (inline "ul")))))
   (is (eq (vfirst ($ "ul"))
-          (vfirst ($ (eval (format NIL "ul")))))))
+          (vfirst ($ (eval (format nil "ul")))))))
 
 (test fun-add
   (init-test-environment)
@@ -86,10 +86,10 @@
                     (plump:attribute (vfirst ($ "article" (add-class "foo"))) "class")))
   (is (string-equal "foo bar"
                     (plump:attribute (vfirst ($ "article" (add-class "bar"))) "class")))
-  (is (string-equal (format NIL "~a ~a" (plump:get-attribute (vfirst ($ "div")) "class") "baz")
+  (is (string-equal (format nil "~a ~a" (plump:get-attribute (vfirst ($ "div")) "class") "baz")
                     (plump:attribute (vfirst ($ "div" (add-class "baz"))) "class"))))
 
-(test (fun-after :depends-on (AND . (fun-children fun-child-index)))
+(test (fun-after :depends-on (and . (fun-children fun-child-index)))
   (init-test-environment)
   (is (eq (vfirst ($ "article blockquote p"))
           (vfirst ($ "article blockquote p" (after "<div>Foo</div>")))))
@@ -105,7 +105,7 @@
   (is (eq (vfirst ($ "#source"))
           (vfirst ($ "article p, #source p" (ancestor))))))
 
-(test (fun-append :depends-on (AND . (fun-children)))
+(test (fun-append :depends-on (and . (fun-children)))
   (init-test-environment)
   (is (eq (vfirst ($ "#target"))
           (vfirst ($ "#target" (append ($ "#source article"))))))
@@ -116,7 +116,7 @@
   (is (= 2
          (length ($ "#target article" (children))))))
 
-(test (fun-append-to :depends-on (AND . (fun-children fun-append)))
+(test (fun-append-to :depends-on (and . (fun-children fun-append)))
   (init-test-environment)
   (is (eq (vfirst ($ "#source article"))
           (vfirst ($ "#source article" (append-to "#target")))))
@@ -136,7 +136,7 @@
   (is (string-equal (plump:get-attribute (vfirst ($ "#source article")) "foo")
                     (vfirst ($ "#source article" (attr :foo))))))
 
-(test (fun-before :depends-on (AND . (fun-children fun-child-index)))
+(test (fun-before :depends-on (and . (fun-children fun-child-index)))
   (init-test-environment)
   (is (eq (vfirst ($ "article blockquote p"))
           (vfirst ($ "article blockquote p" (before "<div>Foo</div>")))))
@@ -163,7 +163,7 @@
   (is (= 3
          (vfirst ($ "#source>ul" (child-index))))))
 
-(test (fun-clone :depends-on (AND . (fun-serialize)))
+(test (fun-clone :depends-on (and . (fun-serialize)))
   (init-test-environment)
   (is-false (eq (vfirst ($ "article"))
                 (vfirst ($ "article" (clone)))))
@@ -208,21 +208,21 @@
   (is (string-equal "color:blue;"
                     (plump:get-attribute (vfirst ($ "#target" (css :foo "" :color "blue"))) "style"))))
 
-(test (fun-data :depends-on (AND . (fun-attr)))
+(test (fun-data :depends-on (and . (fun-attr)))
   (init-test-environment)
   (is (eq (vfirst ($ "#target"))
           (vfirst ($ "#target" (data :foo "bar")))))
   (is (string-equal "bar"
                     (vfirst ($ "#target" (data :foo))))))
 
-(test (fun-deepest :depends-on (AND . (fun-remove)))
+(test (fun-deepest :depends-on (and . (fun-remove)))
   (init-test-environment)
   (is (eq (vfirst ($ "#source>p"))
           (vfirst ($ "#source" (deepest)))))
   (is (eq (vfirst ($ "title"))
           (vfirst ($ "html" (deepest))))))
 
-(test (fun-detach :depends-on (AND . (fun-remove))))
+(test (fun-detach :depends-on (and . (fun-remove))))
 
 (test fun-each
   (init-test-environment)
@@ -262,7 +262,7 @@
   (is (eq (vsecond ($ "head, body"))
           (vfirst ($ "head, body" (filter "body"))))))
 
-(test (fun-find :depends-on (AND . (fun-children fun-filter)))
+(test (fun-find :depends-on (and . (fun-children fun-filter)))
   (init-test-environment)
   (is (= 3
          (length ($ "html" (find "li")))))
@@ -283,7 +283,7 @@
   (is (eq (vsecond ($ "li"))
           (vfirst ($ "li" (gt 1))))))
 
-(test (fun-has :depends-on (AND . (fun-find)))
+(test (fun-has :depends-on (and . (fun-find)))
   (init-test-environment)
   (is (= 2
          (length ($ "head, body, article" (has "p")))))
@@ -292,22 +292,22 @@
 
 (test fun-has-class
   (init-test-environment)
-  (is (eq T ($ "head, body, div" (has-class "fixed"))))
-  (is-false (eq T ($ "div" (has-class "foobar")))))
+  (is (eq t ($ "head, body, div" (has-class "fixed"))))
+  (is-false (eq t ($ "div" (has-class "foobar")))))
 
-(test (fun-hide :depends-on (AND . (fun-css)))
+(test (fun-hide :depends-on (and . (fun-css)))
   (init-test-environment)
   (is (string-equal "display:none;"
                     (plump:get-attribute (vfirst ($ "article" (hide))) "style"))))
 
-(test (fun-html :depends-on (AND . (fun-empty fun-serialize)))
+(test (fun-html :depends-on (and . (fun-empty fun-serialize)))
   (init-test-environment)
   (is (eq (vfirst ($ "li"))
           (vfirst ($ "li" (html "FOO")))))
   (is (string-equal "FOO"
                     (vfirst ($ "li" (html))))))
 
-(test (fun-index :depends-on (AND . (fun-children fun-parent)))
+(test (fun-index :depends-on (and . (fun-children fun-parent)))
   (init-test-environment)
   (is (= 2
          (vfirst ($ "article" (index)))))
@@ -315,11 +315,11 @@
          (vfirst ($ "article p" (index))))))
 
 (test fun-initialize
-  (lquery:initialize NIL)
+  (lquery:initialize nil)
   (is (eq (vfirst ($ (initialize *test-file*)))
           (vfirst ($)))))
 
-(test (fun-insert-after :depends-on (AND . (fun-contains fun-after)))
+(test (fun-insert-after :depends-on (and . (fun-contains fun-after)))
   (init-test-environment)
   (is-false (eq (vfirst ($ "article"))
                 (vfirst ($ "article" (insert-after "#target")))))
@@ -328,7 +328,7 @@
   (is (string-equal "article"
                     (plump:tag-name (vlast ($ "body" (children)))))))
 
-(test (fun-insert-before :depends-on (AND . (fun-contains fun-before)))
+(test (fun-insert-before :depends-on (and . (fun-contains fun-before)))
   (init-test-environment)
   (is-false (eq (vfirst ($ "article"))
                 (vfirst ($ "article" (insert-before "#target")))))
@@ -339,13 +339,13 @@
 
 (test fun-is
   (init-test-environment)
-  (is (eq T ($ "head, body, div" (is "#source"))))
-  (is-false (eq T ($ "head, body" (is "#source")))))
+  (is (eq t ($ "head, body, div" (is "#source"))))
+  (is-false (eq t ($ "head, body" (is "#source")))))
 
 (test (fun-is-empty)
   (init-test-environment)
-  (is (eq NIL (vfirst ($ "title" (is-empty)))))
-  (is (eq T (vfirst ($ "#target" (is-empty))))))
+  (is (eq nil (vfirst ($ "title" (is-empty)))))
+  (is (eq t (vfirst ($ "#target" (is-empty))))))
 
 (test fun-last
   (init-test-environment)
@@ -371,7 +371,7 @@
   (is (string-equal "source"
                     (vfirst ($ "div" (map (lambda (node) (plump:get-attribute node "id"))))))))
 
-(test (fun-next :depends-on (AND . (fun-children fun-parent fun-index)))
+(test (fun-next :depends-on (and . (fun-children fun-parent fun-index)))
   (init-test-environment)
   (is (eq (vfirst ($ "#list"))
           (vfirst ($ "#source>p" (next)))))
@@ -379,7 +379,7 @@
           (vfirst ($ "article header" (next)))))
   (is (= 0 (length ($ "article header" (next "div"))))))
 
-(test (fun-next-all :depends-on (AND . (fun-children fun-parent fun-index fun-first fun-last)))
+(test (fun-next-all :depends-on (and . (fun-children fun-parent fun-index fun-first fun-last)))
   (init-test-environment)
   (is (= 2
          (length ($ "#list li" (first) (next-all)))))
@@ -388,7 +388,7 @@
   (is (eq (vfirst ($ "#list"))
           (vfirst ($ "#source p" (next-all "ul"))))))
 
-(test (fun-next-until :depends-on (AND . (fun-next-all)))
+(test (fun-next-until :depends-on (and . (fun-next-all)))
   (init-test-environment)
   (is (= 1
          (length ($ "h1" (next-until "#target")))))
@@ -413,7 +413,7 @@
   (init-test-environment)
   (is (= 1
          (length ($ "title" (not-empty)))))
-  (is (eq NIL
+  (is (eq nil
           (vfirst ($ "#target" (not-empty))))))
 
 (test fun-odd
@@ -427,7 +427,7 @@
   (init-test-environment)
   (is (eq (vfirst ($ "body"))
           (vfirst ($ "h1" (parent)))))
-  (is (eq NIL
+  (is (eq nil
           (vfirst ($ "h1" (parent "#source"))))))
 
 (test fun-parents
@@ -442,7 +442,7 @@
   (is (eq (vfirst ($ "#source"))
           (vlast ($ "article p" (parents-until "body"))))))
 
-(test (fun-prepend :depends-on (AND . (fun-children)))
+(test (fun-prepend :depends-on (and . (fun-children)))
   (init-test-environment)
   (is (eq (vfirst ($ "#list"))
           (vfirst ($ "#list" (prepend ($ "article"))))))
@@ -451,7 +451,7 @@
   (is (string-equal "article"
                     (plump:tag-name (vfirst ($ "#list" (children)))))))
 
-(test (fun-prepend-to :depends-on (AND . (fun-children fun-prepend)))
+(test (fun-prepend-to :depends-on (and . (fun-children fun-prepend)))
   (init-test-environment)
   (is (eq (vfirst ($ "article"))
           (vfirst ($ "article" (prepend-to ($ "#list"))))))
@@ -460,7 +460,7 @@
   (is (string-equal "article"
                     (plump:tag-name (vfirst ($ "#list" (children)))))))
 
-(test (fun-prev :depends-on (AND . (fun-children fun-parent fun-index)))
+(test (fun-prev :depends-on (and . (fun-children fun-parent fun-index)))
   (init-test-environment)
   (is (eq (vfirst ($ "#list"))
           (vfirst ($ "article" (prev)))))
@@ -469,7 +469,7 @@
   (is (= 0
          (length ($ "article blockquote" (prev "div"))))))
 
-(test (fun-prev-all :depends-on (AND . (fun-children fun-parent fun-index fun-first fun-last)))
+(test (fun-prev-all :depends-on (and . (fun-children fun-parent fun-index fun-first fun-last)))
   (init-test-environment)
   (is (= 2
          (length ($ "#list li" (last) (prev-all)))))
@@ -478,14 +478,14 @@
   (is (eq (vfirst ($ "#list"))
           (vfirst ($ "article" (prev-all "ul"))))))
 
-(test (fun-prev-until :depends-on (AND . (fun-prev-all)))
+(test (fun-prev-until :depends-on (and . (fun-prev-all)))
   (init-test-environment)
   (is (= 1
          (length ($ "#target" (prev-until "h1")))))
   (is (eq (vfirst ($ "#source"))
           (vlast ($ "#target" (prev-until "h1"))))))
 
-(test (fun-remove :depends-on (AND . (fun-children)))
+(test (fun-remove :depends-on (and . (fun-children)))
   (init-test-environment)
   (is (eq (vfirst ($ "li"))
           (vfirst ($ "li" (remove)))))
@@ -496,25 +496,25 @@
   (init-test-environment)
   (is (eq (vfirst ($ "#source"))
           (vfirst ($ "#source" (remove-attr "class")))))
-  (is (eq NIL (plump:has-attribute (vfirst ($ "#source")) "class"))))
+  (is (eq nil (plump:has-attribute (vfirst ($ "#source")) "class"))))
 
-(test (fun-remove-class :depends-on (AND . (fun-has-class fun-add-class)))
+(test (fun-remove-class :depends-on (and . (fun-has-class fun-add-class)))
   (init-test-environment)
   (is (eq (vfirst ($ "#source"))
           (vfirst ($ "#source" (remove-class "fixed")))))
-  (is (eq NIL ($ "#source" (has-class "fixed"))))
+  (is (eq nil ($ "#source" (has-class "fixed"))))
   ($ "#source" (add-class "foo" "bar" "baz") (remove-class "bar"))
-  (is (eq NIL ($ "#source" (has-class "bar"))))
-  (is (eq T ($ "#source" (has-class "baz")))))
+  (is (eq nil ($ "#source" (has-class "bar"))))
+  (is (eq t ($ "#source" (has-class "baz")))))
 
-(test (fun-remove-data :depends-on (AND . (fun-data fun-remove-attr)))
+(test (fun-remove-data :depends-on (and . (fun-data fun-remove-attr)))
   (init-test-environment)
   ($ "#source" (data :foo "bar"))
   (is (eq (vfirst ($ "#source"))
           (vfirst ($ "#source" (remove-data "foo")))))
-  (is (eq NIL (plump:has-attribute (vfirst ($ "#source")) "data-foo"))))
+  (is (eq nil (plump:has-attribute (vfirst ($ "#source")) "data-foo"))))
 
-(test (fun-replace-all :depends-on (AND . (fun-children fun-after fun-remove)))
+(test (fun-replace-all :depends-on (and . (fun-children fun-after fun-remove)))
   (init-test-environment)
   (is (eq (vfirst ($ "article"))
           (vfirst ($ "article" (replace-all "#target")))))
@@ -523,7 +523,7 @@
   (is (string-equal "article"
                     (plump:tag-name (vlast ($ "body" (children)))))))
 
-(test (fun-replace-with :depends-on (AND . (fun-children fun-after fun-remove)))
+(test (fun-replace-with :depends-on (and . (fun-children fun-after fun-remove)))
   (init-test-environment)
   (is (eq (vfirst ($ "#target"))
           (vfirst ($ "#target" (replace-with ($ "article"))))))
@@ -532,19 +532,19 @@
   (is (string-equal "article"
                     (plump:tag-name (vlast ($ "body" (children)))))))
 
-(test (fun-show :depends-on (AND . (fun-css)))
+(test (fun-show :depends-on (and . (fun-css)))
   (init-test-environment)
   (is (string-equal "display:block;"
                     (plump:get-attribute (vfirst ($ "article" (show))) "style"))))
 
-(test (fun-siblings :depends-on (AND . (fun-children fun-parent)))
+(test (fun-siblings :depends-on (and . (fun-children fun-parent)))
   (init-test-environment)
   (is (= 2
          (length ($ "#source" (siblings)))))
   (is (eq (vfirst ($ "#target"))
           (vsecond ($ "#source" (siblings))))))
 
-(test (fun-size :depends-on (AND . (fun-length)))
+(test (fun-size :depends-on (and . (fun-length)))
   (init-test-environment)
   (is (= (length ($ "li"))
          ($ "li" (size)))))
@@ -573,15 +573,15 @@
   (is (string-equal "FooBar"
                     (vfirst ($ "#source>p" (text))))))
 
-(test (fun-toggle-class :depends-on (AND . (fun-has-class fun-remove-class fun-add-class)))
+(test (fun-toggle-class :depends-on (and . (fun-has-class fun-remove-class fun-add-class)))
   (init-test-environment)
-  (is-false (eq T ($ "article" (has-class "foo"))))
+  (is-false (eq t ($ "article" (has-class "foo"))))
   (is (eq (vfirst ($ "article"))
           (vfirst ($ "article" (toggle-class "foo")))))
-  (is (eq T ($ "article" (has-class "foo"))))
+  (is (eq t ($ "article" (has-class "foo"))))
   (is (eq (vfirst ($ "article"))
           (vfirst ($ "article" (toggle-class "foo")))))
-  (is-false (eq T ($ "article" (has-class "foo")))))
+  (is-false (eq t ($ "article" (has-class "foo")))))
 
 (test fun-unwrap
   (init-test-environment)
@@ -592,14 +592,14 @@
   (is (= 3
          (length ($ "#source li")))))
 
-(test (fun-val :depends-on (AND . (fun-attr)))
+(test (fun-val :depends-on (and . (fun-attr)))
   (init-test-environment)
   (is (eq (vfirst ($ "article"))
           (vfirst ($ "article" (val "foo")))))
   (is (string-equal "foo"
                     (vfirst ($ "article" (val))))))
 
-(test (fun-wrap :depends-on (AND . (fun-prepend fun-deepest fun-replace-all)))
+(test (fun-wrap :depends-on (and . (fun-prepend fun-deepest fun-replace-all)))
   (init-test-environment)
   (is (eq (vfirst ($ "li"))
           (vfirst ($ "li" (wrap "<div></div>")))))
@@ -608,7 +608,7 @@
   (is-false (eq (plump:parent (vfirst ($ "li")))
                 (plump:parent (vsecond ($ "li"))))))
 
-(test (fun-wrap-all :depends-on (AND . (fun-child-index fun-deepest)))
+(test (fun-wrap-all :depends-on (and . (fun-child-index fun-deepest)))
   (init-test-environment)
   (is (eq (vfirst ($ "li"))
           (vfirst ($ "li" (wrap-all "<div></div>")))))
@@ -617,7 +617,7 @@
   (is (eq (plump:parent (vfirst ($ "li")))
           (plump:parent (vsecond ($ "li"))))))
 
-(test (fun-wrap-inner :depends-on (AND . (fun-prepend fun-deepest fun-empty fun-append)))
+(test (fun-wrap-inner :depends-on (and . (fun-prepend fun-deepest fun-empty fun-append)))
   (init-test-environment)
   (is (eq (vfirst ($ "#list"))
           (vfirst ($ "#list" (wrap-inner "<div></div>")))))

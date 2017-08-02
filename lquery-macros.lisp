@@ -35,4 +35,4 @@ This construct is especially useful in combination with MAP-APPLY."
 
 This is merely a performance macro to avoid the unnecessary default allocation of a vector."
   (declare (ignore nodes))
-  `(lquery-funcs:initialize NIL ,@init-calls))
+  `(lquery-funcs:initialize nil ,@init-calls))
